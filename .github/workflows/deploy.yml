@@ -21,10 +21,10 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
 
-          cd chatapp-backend    # đường dẫn dự án trên EC2
+          cd chat-app-backend    # đường dẫn dự án trên EC2
           git reset --hard               # Hủy mọi thay đổi local
           git clean -fd
           git pull origin main             # kéo code mới nhất từ GitHub
           npm install
           npm run build
-          pm2 restart chatapp-backend  # Khởi động lại ứng dụng với PM2
+          pm2 restart chat-app-backend  # Khởi động lại ứng dụng với PM2
