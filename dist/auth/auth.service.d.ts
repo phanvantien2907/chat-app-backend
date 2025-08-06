@@ -6,6 +6,7 @@ import { LoginrDTO } from 'src/auth/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from 'src/auth/schema/refreshtoken.schema';
 import { ResetToken } from 'src/auth/schema/resert-token.schema';
+import { Response } from 'express';
 export declare class AuthService {
     private authModel;
     private refreshModel;
@@ -16,12 +17,7 @@ export declare class AuthService {
         msg: string;
         status: HttpStatus;
     }>;
-    login(loginData: LoginrDTO): Promise<{
-        status: HttpStatus;
-        access_token: string;
-        refresh_token: string;
-        msg: string;
-    }>;
+    login(loginData: LoginrDTO, response: Response): Promise<Response<any, Record<string, any>>>;
     refreshtoken(rftoken: string): Promise<{
         access_token: string;
         status: HttpStatus;

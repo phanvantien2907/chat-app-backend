@@ -15,6 +15,8 @@ const dotenv = require("dotenv");
 const mongoose_1 = require("@nestjs/mongoose");
 const auth_module_1 = require("./auth/auth.module");
 const jwt_1 = require("@nestjs/jwt");
+const exception_module_1 = require("./exception/exception.module");
+const http_exception_filter_1 = require("./exception/http-exception.filter");
 dotenv.config();
 let AppModule = class AppModule {
 };
@@ -24,10 +26,13 @@ exports.AppModule = AppModule = __decorate([
         imports: [chat_module_1.ChatModule, mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL), auth_module_1.AuthModule,
             jwt_1.JwtModule.register({ secret: process.env.JWT_SECRET,
                 signOptions: { expiresIn: '1h' },
-                global: true, })
-        ],
+                global: true, }),
+            exception_module_1.ExceptionModule],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, {
+                provide: 'APP_FILTER',
+                useClass: http_exception_filter_1.CatchEverythingFilter,
+            }],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, HttpStatus, Injectable, NotFoundException, Res, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 import { Model } from 'mongoose';
 import { RegisterDTO } from 'src/auth/dto/register.dto';
@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshToken } from 'src/auth/schema/refreshtoken.schema';
 import { ResetToken } from 'src/auth/schema/resert-token.schema';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -26,14 +27,17 @@ constructor(@InjectModel(Auth.name) private authModel: Model<Auth>,
    return {msg: 'Đăng ký thành công', status: HttpStatus.CREATED};
   }
 
- async login(@Body() loginData: LoginrDTO) {
+ async login(@Body() loginData: LoginrDTO, @Res() response: Response) {
   const exiting_users = await this.authModel.findOne({username: loginData.username});
     if(!exiting_users) { throw new NotFoundException('Người dùng không tồn tại!') }
     const valid_password = await bcrypt.compare(loginData.password, exiting_users.password);
     if(!valid_password) { throw new UnauthorizedException('Mật khẩu không đúng'); }
     if(!exiting_users.is_active) { throw new BadRequestException('Tài khoản đã bị khóa'); }
     const token = await this.generatortoken(exiting_users._id.toString());
-    return {msg: 'Đăng nhập thành công', ...token, status: HttpStatus.OK};
+    const new_last_login = new Date().toISOString();
+    await this.authModel.findByIdAndUpdate(exiting_users._id, { last_login: new_last_login });
+    response.cookie("token", token.access_token, {httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 60 * 60, path: '/'});
+    return response.status(HttpStatus.OK).json({ msg: 'Đăng nhập thành công', user_id: exiting_users._id.toString(), username: exiting_users.username, fullName: exiting_users.fullname, last_login: new_last_login, refresh_token: token.refresh_token });
  }
 
  async refreshtoken(rftoken: string) {

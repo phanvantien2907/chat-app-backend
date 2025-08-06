@@ -20,6 +20,7 @@ const refresh_token_dto_1 = require("./dto/refresh-token.dto");
 const register_dto_1 = require("./dto/register.dto");
 const resert_password_dto_1 = require("./dto/resert-password.dto");
 const guards_guard_1 = require("../guards/guards.guard");
+const http_exception_filter_1 = require("../exception/http-exception.filter");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -28,8 +29,8 @@ let AuthController = class AuthController {
     register(registerData) {
         return this.authService.register(registerData);
     }
-    login(loginData) {
-        return this.authService.login(loginData);
+    login(loginData, response) {
+        return this.authService.login(loginData, response);
     }
     refreshtoken(rftokenDTO) {
         return this.authService.refreshtoken(rftokenDTO.token);
@@ -49,6 +50,7 @@ let AuthController = class AuthController {
 exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)('register'),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_dto_1.RegisterDTO]),
@@ -56,13 +58,16 @@ __decorate([
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginrDTO]),
+    __metadata("design:paramtypes", [login_dto_1.LoginrDTO, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Post)('refresh'),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [refresh_token_dto_1.RefreshTokenDTO]),
@@ -70,6 +75,7 @@ __decorate([
 ], AuthController.prototype, "refreshtoken", null);
 __decorate([
     (0, common_1.Post)('logout'),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     (0, common_1.UseGuards)(guards_guard_1.GuardsGuard),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -78,6 +84,7 @@ __decorate([
 ], AuthController.prototype, "logout", null);
 __decorate([
     (0, common_1.Post)('reset-password/:token'),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     __param(0, (0, common_1.Param)('token')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -87,6 +94,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)('change-password'),
     (0, common_1.UseGuards)(guards_guard_1.GuardsGuard),
+    (0, common_1.UseFilters)(http_exception_filter_1.CatchEverythingFilter),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),

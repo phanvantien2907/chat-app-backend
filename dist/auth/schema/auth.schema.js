@@ -19,10 +19,11 @@ let Auth = class Auth extends mongoose_2.Document {
     password;
     is_active;
     is_deleted;
+    last_login;
 };
 exports.Auth = Auth;
 __decorate([
-    (0, mongoose_1.Prop)({ required: true, unique: true }),
+    (0, mongoose_1.Prop)({ required: true, unique: true, index: true }),
     __metadata("design:type", String)
 ], Auth.prototype, "username", void 0);
 __decorate([
@@ -45,6 +46,10 @@ __decorate([
     (0, mongoose_1.Prop)({ default: false }),
     __metadata("design:type", Boolean)
 ], Auth.prototype, "is_deleted", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: null }),
+    __metadata("design:type", Date)
+], Auth.prototype, "last_login", void 0);
 exports.Auth = Auth = __decorate([
     (0, mongoose_1.Schema)({ versionKey: false, timestamps: true })
 ], Auth);

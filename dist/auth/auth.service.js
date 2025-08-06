@@ -44,7 +44,7 @@ let AuthService = class AuthService {
         await this.authModel.create({ username: registerData.username, fullname: registerData.fullname, email: registerData.email, password: hashedPassword, is_active: true });
         return { msg: 'Đăng ký thành công', status: common_1.HttpStatus.CREATED };
     }
-    async login(loginData) {
+    async login(loginData, response) {
         const exiting_users = await this.authModel.findOne({ username: loginData.username });
         if (!exiting_users) {
             throw new common_1.NotFoundException('Người dùng không tồn tại!');
@@ -57,7 +57,10 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('Tài khoản đã bị khóa');
         }
         const token = await this.generatortoken(exiting_users._id.toString());
-        return { msg: 'Đăng nhập thành công', ...token, status: common_1.HttpStatus.OK };
+        const new_last_login = new Date().toISOString();
+        await this.authModel.findByIdAndUpdate(exiting_users._id, { last_login: new_last_login });
+        response.cookie("token", token.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 60 * 60, path: '/' });
+        return response.status(common_1.HttpStatus.OK).json({ msg: 'Đăng nhập thành công', user_id: exiting_users._id.toString(), username: exiting_users.username, fullName: exiting_users.fullname, last_login: new_last_login, refresh_token: token.refresh_token });
     }
     async refreshtoken(rftoken) {
         const token = await this.refreshModel.findOne({
@@ -122,8 +125,9 @@ __decorate([
 ], AuthService.prototype, "register", null);
 __decorate([
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginrDTO]),
+    __metadata("design:paramtypes", [login_dto_1.LoginrDTO, Object]),
     __metadata("design:returntype", Promise)
 ], AuthService.prototype, "login", null);
 exports.AuthService = AuthService = __decorate([
