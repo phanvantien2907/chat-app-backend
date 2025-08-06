@@ -8,7 +8,6 @@ import { LoginrDTO } from 'src/auth/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshToken } from 'src/auth/schema/refreshtoken.schema';
-import { nanoid } from 'nanoid';
 import { ResetToken } from 'src/auth/schema/resert-token.schema';
 
 @Injectable()
