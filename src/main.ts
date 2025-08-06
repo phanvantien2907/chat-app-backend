@@ -15,6 +15,6 @@ async function bootstrap() {
     forbidNonWhitelisted: true, // Ném lỗi nếu có thuộc tính không được định nghĩa
     transform: true, // Tự động chuyển đổi kiểu dữ liệu
   }));
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
