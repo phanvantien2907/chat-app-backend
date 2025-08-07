@@ -10,9 +10,9 @@ export declare class ChatService {
     }> & {
         __v: number;
     }>;
-    getMessage(roomId: string): Promise<NotFoundException | (import("mongoose").Document<unknown, {}, Message, {}, {}> & Message & Required<{
+    getMessage(roomId: string): Promise<(import("mongoose").Document<unknown, {}, Message, {}, {}> & Message & Required<{
         _id: unknown;
     }> & {
         __v: number;
-    })[]>;
+    })[] | NotFoundException>;
 }

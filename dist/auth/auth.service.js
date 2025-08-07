@@ -59,7 +59,7 @@ let AuthService = class AuthService {
         const token = await this.generatortoken(exiting_users._id.toString());
         const new_last_login = new Date().toISOString();
         await this.authModel.findByIdAndUpdate(exiting_users._id, { last_login: new_last_login });
-        response.cookie("token", token.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 60 * 60, path: '/' });
+        response.cookie("token", token.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 60 * 60 * 1000, path: '/' });
         return response.status(common_1.HttpStatus.OK).json({ msg: 'Đăng nhập thành công', user_id: exiting_users._id.toString(), username: exiting_users.username, fullName: exiting_users.fullname, last_login: new_last_login, refresh_token: token.refresh_token });
     }
     async refreshtoken(rftoken) {

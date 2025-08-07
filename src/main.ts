@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    origin: '*', // Cho phép tất cả các nguồn gốc
+    origin: `${process.env.FRONTEND_URL}`, // Cho phép tất cả các nguồn gốc
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Các phương thức HTTP được phép
     allowedHeaders: 'Content-Type, Authorization', // Các tiêu đề được phép
     credentials: true, // Cho phép cookie được gửi trong các yêu cầu cross-origin
