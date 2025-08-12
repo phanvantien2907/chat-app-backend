@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ExceptionModule } from './exception/exception.module';
 import { CatchEverythingFilter } from 'src/exception/http-exception.filter';
+import { UsersModule } from './users/users.module';
 dotenv.config();
 
 @Module({
@@ -15,7 +16,8 @@ dotenv.config();
     JwtModule.register({ secret: process.env.JWT_SECRET!,
     signOptions: { expiresIn: '1h' },
     global: true,}),
-    ExceptionModule
+    ExceptionModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService, {

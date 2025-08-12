@@ -1,1 +1,1 @@
-{"version":3,"file":"chat.dtos.js","sourceRoot":"","sources":["../../../src/chat/dtos/chat.dtos.ts"],"names":[],"mappings":";;;AAAA,MAAa,OAAO;IAChB,QAAQ,CAAS;IACjB,MAAM,CAAS;IACf,OAAO,CAAS;CACnB;AAJD,0BAIC"}
+{"version":3,"file":"chat.dtos.js","sourceRoot":"","sources":["../../../src/chat/dtos/chat.dtos.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAA2C;AAE3C,MAAa,OAAO;IAEhB,QAAQ,CAAS;IAEjB,UAAU,CAAS;IAEnB,OAAO,CAAS;CACnB;AAPD,0BAOC;AALG;IADC,IAAA,0BAAQ,GAAE;;yCACM;AAEjB;IADE,IAAA,0BAAQ,GAAE;;2CACO;AAEnB;IADE,IAAA,0BAAQ,GAAE;;wCACI"}

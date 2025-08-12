@@ -16,7 +16,11 @@ let CatchEverythingFilter = class CatchEverythingFilter {
         const status = exception instanceof common_1.HttpException ? exception.getStatus() : common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         const res = exception.getResponse();
         const msg = typeof res === 'string' ? res : typeof res === 'object' && res['message'] ? res['message'] : res;
-        response.status(status).json({ statusCode: status, timestamp: new Date().toISOString(), path: request.url, msg });
+        response.status(status).json({ statusCode: status,
+            timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Bangkok' }),
+            path: request.url,
+            msg
+        });
     }
 };
 exports.CatchEverythingFilter = CatchEverythingFilter;

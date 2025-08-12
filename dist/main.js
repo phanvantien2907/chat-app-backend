@@ -9,9 +9,9 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use(cookieParser());
     app.enableCors({
-        origin: `${process.env.FRONTEND_URL}`,
+        origin: ['http://localhost:4200'],
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        allowedHeaders: 'Content-Type, Authorization',
+        allowedHeaders: 'Content-Type, Accept, Authorization',
         credentials: true,
     });
     app.setGlobalPrefix('api');

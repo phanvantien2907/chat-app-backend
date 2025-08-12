@@ -17,6 +17,7 @@ const auth_module_1 = require("./auth/auth.module");
 const jwt_1 = require("@nestjs/jwt");
 const exception_module_1 = require("./exception/exception.module");
 const http_exception_filter_1 = require("./exception/http-exception.filter");
+const users_module_1 = require("./users/users.module");
 dotenv.config();
 let AppModule = class AppModule {
 };
@@ -27,7 +28,8 @@ exports.AppModule = AppModule = __decorate([
             jwt_1.JwtModule.register({ secret: process.env.JWT_SECRET,
                 signOptions: { expiresIn: '1h' },
                 global: true, }),
-            exception_module_1.ExceptionModule],
+            exception_module_1.ExceptionModule,
+            users_module_1.UsersModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, {
                 provide: 'APP_FILTER',

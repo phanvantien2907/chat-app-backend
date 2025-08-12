@@ -16,7 +16,7 @@ exports.ChatService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const messages_schema_1 = require("./schema/messages.schema");
+const chat_schema_1 = require("./schema/chat.schema");
 let ChatService = class ChatService {
     messageModel;
     constructor(messageModel) {
@@ -26,18 +26,125 @@ let ChatService = class ChatService {
         const msg = new this.messageModel(ChatDTO);
         return msg.save();
     }
-    async getMessage(roomId) {
-        const find_room = await this.messageModel.find({ roomId: roomId }).sort({ createdAt: 1 }).limit(50).exec();
-        if (find_room.length == 0) {
-            return new common_1.NotFoundException('Phòng không tồn tại');
-        }
-        return find_room;
+    async getMessage(senderId, receiverId, page = 1, pageSize = 50) {
+        const skip = (page - 1) * pageSize;
+        return await this.messageModel
+            .find({
+            $or: [
+                {
+                    senderId: new mongoose_2.Types.ObjectId(senderId),
+                    receiverId: new mongoose_2.Types.ObjectId(receiverId)
+                },
+                {
+                    senderId: new mongoose_2.Types.ObjectId(receiverId),
+                    receiverId: new mongoose_2.Types.ObjectId(senderId)
+                }
+            ],
+            is_deleted: false
+        })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(pageSize)
+            .populate('senderId', 'username fullname')
+            .populate('receiverId', 'username fullname')
+            .exec();
+    }
+    async getUnreadMessages(receiverId) {
+        return await this.messageModel
+            .find({
+            receiverId: new mongoose_2.Types.ObjectId(receiverId),
+            isRead: false,
+            is_deleted: false
+        })
+            .populate('senderId', 'username fullname')
+            .exec();
+    }
+    async markMessagesAsRead(senderId, receiverId) {
+        await this.messageModel.updateMany({
+            senderId: new mongoose_2.Types.ObjectId(senderId),
+            receiverId: new mongoose_2.Types.ObjectId(receiverId),
+            isRead: false
+        }, { isRead: true });
+    }
+    async getMessageById(messageId) {
+        return await this.messageModel
+            .findById(messageId)
+            .populate('senderId', 'username fullname')
+            .populate('receiverId', 'username fullname')
+            .exec();
+    }
+    async deleteMessage(messageId, userId) {
+        const result = await this.messageModel.updateOne({
+            _id: new mongoose_2.Types.ObjectId(messageId),
+            senderId: new mongoose_2.Types.ObjectId(userId)
+        }, { is_deleted: true });
+        return result.modifiedCount > 0;
+    }
+    async getConversations(userId) {
+        const conversations = await this.messageModel.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { senderId: new mongoose_2.Types.ObjectId(userId) },
+                        { receiverId: new mongoose_2.Types.ObjectId(userId) }
+                    ],
+                    is_deleted: false
+                }
+            },
+            {
+                $sort: { createdAt: -1 }
+            },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $eq: ['$senderId', new mongoose_2.Types.ObjectId(userId)] },
+                            '$receiverId',
+                            '$senderId'
+                        ]
+                    },
+                    lastMessage: { $first: '$$ROOT' },
+                    unreadCount: {
+                        $sum: {
+                            $cond: [
+                                {
+                                    $and: [
+                                        { $eq: ['$receiverId', new mongoose_2.Types.ObjectId(userId)] },
+                                        { $eq: ['$isRead', false] }
+                                    ]
+                                },
+                                1,
+                                0
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'otherUser'
+                }
+            },
+            {
+                $unwind: '$otherUser'
+            },
+            {
+                $sort: { 'lastMessage.createdAt': -1 }
+            }
+        ]);
+        return conversations;
+    }
+    async markAsRead(chat_id) {
+        return this.messageModel.findByIdAndUpdate(chat_id, { isRead: true }, { new: true });
     }
 };
 exports.ChatService = ChatService;
 exports.ChatService = ChatService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(messages_schema_1.Message.name)),
+    __param(0, (0, mongoose_1.InjectModel)(chat_schema_1.Chat.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], ChatService);
 //# sourceMappingURL=chat-service.js.map

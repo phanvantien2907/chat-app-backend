@@ -1,5 +1,10 @@
+import { IsString } from "class-validator";
+
 export class ChatDTO {
-    seederId: string;
-    roomId: string;
+    @IsString()
+    senderId: string;
+     @IsString()
+    receiverId: string;
+     @IsString()
     content: string;
 }

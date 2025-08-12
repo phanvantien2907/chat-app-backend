@@ -1,5 +1,5 @@
 export declare class ChatDTO {
-    seederId: string;
-    roomId: string;
+    senderId: string;
+    receiverId: string;
     content: string;
 }

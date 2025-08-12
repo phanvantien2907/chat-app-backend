@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true, versionKey: false })
-export class Message extends Document {
+export class Chat extends Document {
   @Prop({ required: true, type: Types.ObjectId, ref: 'users' })
   senderId: Types.ObjectId;
 
@@ -19,4 +19,4 @@ export class Message extends Document {
   is_deleted: boolean;
 }
 
-export const MessageSchema = SchemaFactory.createForClass(Message);
+export const ChatSchema = SchemaFactory.createForClass(Chat);
